@@ -25,14 +25,6 @@ class Team(models.Model):
         related_name='managed_team'
     )
     
-    user = models.OneToOneField(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name='user_team'
-    )
-    
     created_at = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):

@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Login | PremierFighters{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1>Iniciar sesion</h1>
+
+    {% if form.errors %}
+        <p class="muted">Usuario o contrasena incorrectos.</p>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button class="btn" type="submit">Entrar</button>
+    </form>
+</div>
+{% endblock %}

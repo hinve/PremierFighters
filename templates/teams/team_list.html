@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Equipos | PremierFighters{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1>Equipos</h1>
+
+    <div style="margin-bottom: 12px;">
+        <a class="btn" href="{% url 'team_create' %}">+ Crear equipo</a>
+    </div>
+
+    {% if teams %}
+        <ul>
+            {% for team in teams %}
+                <li style="margin-bottom: 10px;">
+                    <a href="{% url 'team_detail' team.pk %}">{{ team.name }} ({{ team.tag }})</a>
+                    - {{ team.region }}
+                    <a class="btn" href="{% url 'team_detail' team.pk %}">Ver</a>
+                    <a class="btn" href="{% url 'team_update' team.pk %}">Editar</a>
+                    <a class="btn" href="{% url 'team_delete' team.pk %}">Borrar</a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p class="muted">No hay equipos disponibles para tu usuario.</p>
+    {% endif %}
+</div>
+{% endblock %}

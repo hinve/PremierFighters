@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Equipo | PremierFighters{% endblock %}
+{% block content %}
+<div class="card">
+  <h1>{% if mode == "edit" %}Editar equipo{% else %}Crear equipo{% endif %}</h1>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button class="btn" type="submit">Guardar</button>
+  </form>
+</div>
+{% endblock %}

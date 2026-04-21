@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}PremierFighters{% endblock %}</title>
+    <style>
+        body {
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            background: #f5f7fb;
+            color: #1f2937;
+        }
+
+        header {
+            background: #111827;
+            color: #ffffff;
+            padding: 14px 20px;
+        }
+
+        nav {
+            display: flex;
+            gap: 14px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        nav a {
+            color: #dbeafe;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        nav a:hover {
+            color: #ffffff;
+            text-decoration: underline;
+        }
+
+        .container {
+            max-width: 960px;
+            margin: 24px auto;
+            padding: 0 16px;
+        }
+
+        .card {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        ul {
+            padding-left: 18px;
+        }
+
+        .muted {
+            color: #6b7280;
+        }
+
+        .user-row {
+            margin-left: auto;
+            color: #e5e7eb;
+            font-size: 14px;
+        }
+
+        .btn {
+            display: inline-block;
+            border: 1px solid #111827;
+            color: #111827;
+            padding: 8px 12px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            background: #ffffff;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background: #111827;
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <nav>
+        <a href="{% url 'home' %}">Inicio</a>
+        <a href="{% url 'team_list' %}">Equipos</a>
+        <a href="{% url 'player_list' %}">Jugadores</a>
+        {% if user.is_authenticated %}
+            <span class="user-row">{{ user.username }} ({{ user.role }})</span>
+            <form method="post" action="{% url 'logout' %}" style="display:inline;">
+                {% csrf_token %}
+                <button class="btn" type="submit">Salir</button>
+            </form>
+        {% else %}
+            <a href="{% url 'login' %}">Entrar</a>
+        {% endif %}
+    </nav>
+</header>
+
+<main class="container">
+{% if messages %}
+{% for message in messages %}
+<div class="card" style="border-left: 4px solid #ef4444;">
+{{ message }}
+</div>
+{% endfor %}
+{% endif %}
+    {% block content %}{% endblock %}
+</main>
+</body>
+</html>

@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block title %}Detalle Jugador | PremierFighters{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1>{{ player.nickname }}</h1>
+    <p><strong>Nombre real:</strong> {{ player.real_name|default:"-" }}</p>
+    <p><strong>Pais:</strong> {{ player.country|default:"-" }}</p>
+    <p><strong>Rol en juego:</strong> {{ player.role_in_game|default:"-" }}</p>
+    <p><strong>Equipo:</strong> {{ player.team.name }}</p>
+</div>
+{% endblock %}

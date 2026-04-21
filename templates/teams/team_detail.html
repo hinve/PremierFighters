@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block title %}Detalle Equipo | PremierFighters{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1>{{ team.name }} ({{ team.tag }})</h1>
+    <p><strong>Region:</strong> {{ team.region }}</p>
+    <p><strong>Coach:</strong> {% if team.coach %}{{ team.coach.username }}{% else %}Sin asignar{% endif %}</p>
+    <p><strong>Manager:</strong> {% if team.manager %}{{ team.manager.username }}{% else %}Sin asignar{% endif %}</p>
+</div>
+{% endblock %}

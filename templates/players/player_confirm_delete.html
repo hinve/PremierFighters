@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Eliminar jugador{% endblock %}
+{% block content %}
+<div class="card">
+  <h1>Eliminar jugador</h1>
+  <p>¿Seguro que quieres eliminar "{{ player.nickname }}"?</p>
+  <form method="post">
+    {% csrf_token %}
+    <button class="btn" type="submit">Sí, eliminar</button>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}Jugadores | PremierFighters{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1>Jugadores</h1>
+    {% if players %}
+        <ul>
+            {% for player in players %}
+                <li>
+                    <a href="{% url 'player_detail' player.id %}">{{ player.nickname }}</a>
+                    - {{ player.team.name }}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p class="muted">No hay jugadores disponibles para tu usuario.</p>
+    {% endif %}
+</div>
+{% endblock %}
