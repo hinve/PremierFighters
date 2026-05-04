@@ -4,10 +4,108 @@
 
 {% block content %}
 <div class="card">
-    <h1>{{ player.nickname }}</h1>
-    <p><strong>Nombre real:</strong> {{ player.real_name|default:"-" }}</p>
-    <p><strong>Pais:</strong> {{ player.country|default:"-" }}</p>
-    <p><strong>Rol en juego:</strong> {{ player.role_in_game|default:"-" }}</p>
-    <p><strong>Equipo:</strong> {{ player.team.name }}</p>
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; margin-bottom: 24px;">
+        <div>
+            <h1 style="margin: 0;">{{ player.nickname }}</h1>
+            <p class="muted" style="margin: 8px 0 0;">{{ player.real_name|default:"-" }}</p>
+        </div>
+        <div class="btn-group">
+            <a class="btn" href="{% url 'player_update' player.id %}">✏️ Editar</a>
+            <a class="btn btn-danger" href="{% url 'player_delete' player.id %}">🗑️ Borrar</a>
+        </div>
+    </div>
+
+    <div class="two-column">
+        <div style="background: #f8fafc; padding: 16px; border-radius: 12px; border: 1px solid #e2e8f0;">
+            <h3>Información Personal</h3>
+            <p><strong>País:</strong> {{ player.country|default:"-" }}</p>
+            <p><strong>Rol en juego:</strong> {{ player.role_in_game|default:"-" }}</p>
+            <p><strong>Equipo:</strong> <a href="{% url 'team_detail' player.team.id %}">{{ player.team.name }}</a></p>
+        </div>
+
+        <div style="background: linear-gradient(180deg, #eff6ff 0%, #ffffff 100%); padding: 16px; border-radius: 12px; border: 1px solid #dbeafe;">
+            <h3>Estadísticas</h3>
+            <div class="stat-card" style="background: transparent; border: none; padding: 0; margin-bottom: 12px;">
+                <div class="stat-label">K/D Ratio</div>
+                <div class="stat-value">{{ player.calculate_kd_ratio }}</div>
+            </div>
+            <div class="stat-card" style="background: transparent; border: none; padding: 0;">
+                <div class="stat-label">Winrate</div>
+                <div class="stat-value">{{ player.calculate_winrate }}%</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-large">
+        <h3>Últimos 5 mapas jugados</h3>
+        {% if recent_stats %}
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Partido</th>
+                            <th>Mapa</th>
+                            <th>Agente</th>
+                            <th>K/D/A</th>
+                            <th>Resultado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for stat in recent_stats %}
+                            <tr>
+                                <td>
+                                    <a href="{% url 'match_detail' stat.match.id %}">
+                                        {{ stat.match.team.name }} vs {{ stat.match.opponent_name }}
+                                    </a>
+                                    <div class="muted">{{ stat.match.date|date:"d/m/Y H:i" }}</div>
+                                </td>
+                                <td>{{ stat.match.map_name }}</td>
+                                <td>{{ stat.agent_name|default:"-" }}</td>
+                                <td>{{ stat.kills }}/{{ stat.deaths }}/{{ stat.assists }}</td>
+                                <td>
+                                    {% if stat.match.result == 'Win' %}
+                                        <span class="chip chip-good">Ganó</span>
+                                    {% else %}
+                                        <span class="chip chip-bad">Perdió</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="empty-state" style="padding: 24px;">
+                <p class="muted">Sin estadísticas de mapas disponibles.</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="form-actions mt-large">
+        <a class="btn" href="{% url 'player_list' %}">👈 Volver a jugadores</a>
+    </div>
 </div>
+
+<style>
+    .stat-card {
+        border-radius: 12px;
+        padding: 12px;
+        background: #eff6ff;
+        border: 1px solid #dbeafe;
+    }
+
+    .stat-label {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #64748b;
+        margin-bottom: 6px;
+    }
+
+    .stat-value {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: #0f172a;
+    }
+</style>
 {% endblock %}

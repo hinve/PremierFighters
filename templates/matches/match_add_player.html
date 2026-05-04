@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Añadir jugador | PremierFighters{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+        <h1 style="margin:0;">➕ Añadir jugador existente a {{ match.team.name }} vs {{ match.opponent_name }}</h1>
+        <a class="btn" href="{% url 'match_detail' match.id %}">← Volver</a>
+    </div>
+
+    {% if available_players %}
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="id_player">Jugador</label>
+                <select name="player" id="id_player">
+                    {% for p in available_players %}
+                        <option value="{{ p.id }}">{{ p.nickname }}{% if p.real_name %} ({{ p.real_name }}){% endif %}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-actions" style="margin-top:12px;">
+                <button class="btn btn-primary" type="submit">Añadir al partido</button>
+            </div>
+        </form>
+    {% else %}
+        <div class="muted">No hay jugadores disponibles para añadir. Puedes crear uno nuevo o revisar el equipo.</div>
+        <div style="margin-top:12px;">
+            <a class="btn" href="{% url 'player_create' %}?team={{ match.team.id }}&next={% url 'match_detail' match.id %}">Crear jugador nuevo</a>
+            <a class="btn" href="{% url 'team_detail' match.team.id %}">Ver equipo</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -2,11 +2,16 @@
 {% block title %}Eliminar equipo{% endblock %}
 {% block content %}
 <div class="card">
-  <h1>Eliminar equipo</h1>
-  <p>¿Seguro que quieres eliminar "{{ team.name }}"?</p>
+  <h1>🗑️ Eliminar equipo</h1>
+  <p style="background: #fee2e2; border: 1px solid #fecaca; border-radius: 12px; padding: 16px; color: #991b1b; margin-bottom: 24px;">
+    ⚠️ <strong>Cuidado:</strong> ¿Estás seguro que quieres eliminar "{{ team.name }}"? Esta acción no se puede deshacer.
+  </p>
   <form method="post">
     {% csrf_token %}
-    <button class="btn" type="submit">Sí, eliminar</button>
+    <div class="form-actions">
+      <button class="btn btn-danger" type="submit">🗑️ Sí, eliminar</button>
+      <a class="btn" href="{% url 'team_detail' team.pk %}">← Cancelar</a>
+    </div>
   </form>
 </div>
 {% endblock %}

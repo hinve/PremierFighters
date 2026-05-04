@@ -17,14 +17,21 @@ class PlayerMatchStats(models.Model):
         related_name='player_stats'
     )
     
-    map_name = models.CharField(max_length=100, blank=True)
+    agent_name = models.CharField(max_length=100, blank=True)
     kills = models.PositiveIntegerField(default=0)
     deaths = models.PositiveIntegerField(default=0)
     assists = models.PositiveIntegerField(default=0)
     won = models.BooleanField(default=False)
     
     class Meta:
-        unique_together = ('player', 'match', "map_name")
+        unique_together = ('player', 'match')
         
     def __str__(self):
-        return f"Stats for {self.player.nickname} in match {self.match} on map {self.map_name}"
+        agent_label = f" as {self.agent_name}" if self.agent_name else ""
+        return f"Stats for {self.player.nickname} in match {self.match}{agent_label}"
+    
+    def kd_ratio(self):
+        """Calcula el ratio K/D para este mapa."""
+        if self.deaths == 0:
+            return float(self.kills) if self.kills > 0 else 0.0
+        return round(self.kills / self.deaths, 2)

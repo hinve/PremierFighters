@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block title %}Detalle partido | PremierFighters{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; margin-bottom: 24px;">
+        <div>
+            <h1 style="margin: 0;">{{ match.team.name }} vs {{ match.opponent_name }}</h1>
+            <p class="muted" style="margin: 8px 0 0;">{{ match.date|date:"d/m/Y H:i" }}</p>
+        </div>
+        <div class="btn-group">
+            <a class="btn" href="{% url 'match_update' match.id %}">✏️ Editar</a>
+            <a class="btn btn-danger" href="{% url 'match_delete' match.id %}">🗑️ Borrar</a>
+        </div>
+    </div>
+
+    <div class="two-column">
+        <div style="background: #f8fafc; padding: 16px; border-radius: 12px; border: 1px solid #e2e8f0;">
+            <h3>Información del Partido</h3>
+            {% if map_name and banner_url %}
+            <div style="margin-bottom:12px; border-radius:8px; overflow:hidden;">
+                <div style="background-image: url('{{ banner_url }}'); background-size: cover; background-position:center; padding:18px; color:#fff;">
+                    <strong>Mapa jugado:</strong> {{ map_name }}
+                </div>
+            </div>
+            {% elif map_name %}
+            <p><strong>Mapa jugado:</strong> {{ map_name }}</p>
+            {% endif %}
+            <p><strong>Tipo:</strong> {{ match.get_match_type_display }}</p>
+            <p>
+                <strong>Resultado:</strong> 
+                {% if match.result == 'Pending' %}
+                    <span class="chip chip-neutral">Pendiente</span>
+                {% elif match.result == 'Win' %}
+                    <span class="chip chip-good">Victoria</span>
+                {% else %}
+                    <span class="chip chip-bad">Derrota</span>
+                {% endif %}
+            </p>
+            <p><strong>Marcador:</strong> {{ match.score_team }} - {{ match.score_opponent }}</p>
+            {% if match.tournament %}
+                <p><strong>Torneo:</strong> {{ match.tournament.name }}</p>
+            {% endif %}
+        </div>
+
+        <div>
+            <h3>Acciones</h3>
+            <div class="btn-group" style="flex-direction: column;">
+                <a class="btn btn-primary" href="{% url 'match_update' match.id %}">📝 Agregar Estadísticas</a>
+                <a class="btn" href="{% url 'match_add_player' match.id %}">➕ Añadir jugador existente</a>
+                <a class="btn" href="{% url 'match_list' %}">👈 Volver a partidos</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block after %}
+<div class="container">
+    <div class="card">
+        <h3>Resultados del mapa</h3>
+        {% if map_results and map_results.exists %}
+            <div class="stack">
+                {% for stat in map_results %}
+                    <div style="display:grid; grid-template-columns: 1fr auto; gap:20px; padding:16px; border:1px solid #e2e8f0; border-radius:12px; background:#fafbfc;">
+                        <div>
+                            <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">
+                                <strong style="font-size:16px;"><a href="{% url 'mapresult_detail' stat.id %}">{{ stat.player.nickname }}</a></strong>
+                            </div>
+                            <div class="muted" style="margin-bottom:8px; font-size:13px;">{{ stat.match.team.name }} vs {{ stat.match.opponent_name }} · {{ stat.match.date|date:"d/m/Y H:i" }}</div>
+                            <div style="display:flex; gap:16px; font-size:13px; margin-bottom:10px;">
+                                <span><strong>Mapa:</strong> {{ stat.match.map_name|default:'Sin mapa' }}</span>
+                                <span><strong>Agente:</strong> {{ stat.agent_name|default:'Sin agente' }}</span>
+                            </div>
+                        </div>
+                        <div style="display:grid; grid-template-columns: repeat(5, auto); gap:16px; align-items:center; text-align:center;">
+                            <div>
+                                <div class="muted" style="font-size:11px; margin-bottom:4px;">K</div>
+                                <div style="font-weight:700; font-size:18px; color:#16a34a;">{{ stat.kills }}</div>
+                            </div>
+                            <div>
+                                <div class="muted" style="font-size:11px; margin-bottom:4px;">D</div>
+                                <div style="font-weight:700; font-size:18px; color:#dc2626;">{{ stat.deaths }}</div>
+                            </div>
+                            <div>
+                                <div class="muted" style="font-size:11px; margin-bottom:4px;">A</div>
+                                <div style="font-weight:700; font-size:18px; color:#2563eb;">{{ stat.assists }}</div>
+                            </div>
+                            <div>
+                                <div class="muted" style="font-size:11px; margin-bottom:4px;">Resultado</div>
+                                    {% if stat.match.result != 'Pending' %}
+                                        {% if stat.match.result == 'Win' %}
+                                            <span class="chip chip-good" style="font-size:12px;">✔ Victoria</span>
+                                        {% else %}
+                                            <span class="chip chip-bad" style="font-size:12px;">✖ Derrota</span>
+                                        {% endif %}
+                                    {% else %}
+                                        {% if stat.won %}
+                                            <span class="chip chip-good" style="font-size:12px;">✔ Victoria</span>
+                                        {% else %}
+                                            <span class="chip chip-bad" style="font-size:12px;">✖ Derrota</span>
+                                        {% endif %}
+                                    {% endif %}
+                            </div>
+                            <div style="display:flex; flex-direction:column; gap:6px;">
+                                <a class="btn" href="{% url 'mapresult_update' stat.id %}" style="font-size:12px; padding:6px 10px;">Editar</a>
+                                <a class="btn btn-danger" href="{% url 'mapresult_delete' stat.id %}" style="font-size:12px; padding:6px 10px;">Borrar</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="muted">No hay resultados de mapa guardados para este partido.</div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

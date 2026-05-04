@@ -3,9 +3,677 @@
 {% block title %}Dashboard | PremierFighters{% endblock %}
 
 {% block content %}
-<div class="card">
-    <h1>Dashboard</h1>
-    <p class="muted">Bienvenido, {{ user.username }}.</p>
-    <p>Desde aqui puedes navegar por equipos y jugadores.</p>
+<style>
+    .dashboard-shell {
+        display: grid;
+        gap: 20px;
+    }
+
+    .hero {
+        background: linear-gradient(135deg, #0f172a 0%, #1d4ed8 55%, #0f766e 100%);
+        color: #fff;
+        padding: 28px;
+        border-radius: 18px;
+        box-shadow: 0 18px 40px rgba(15, 23, 42, 0.16);
+    }
+
+    .hero-top {
+        display: flex;
+        gap: 16px;
+        justify-content: space-between;
+        align-items: flex-start;
+        flex-wrap: wrap;
+    }
+
+    .hero h1 {
+        margin: 0 0 8px;
+        font-size: 2rem;
+        line-height: 1.1;
+    }
+
+    .hero p {
+        margin: 0;
+        max-width: 60ch;
+        color: rgba(255, 255, 255, 0.88);
+    }
+
+    .picker-card, .panel {
+        background: #fff;
+        border: 1px solid #dbe3ef;
+        border-radius: 18px;
+        padding: 18px;
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05);
+    }
+
+    .picker-grid {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 12px;
+        align-items: end;
+    }
+
+    .field-label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 700;
+        color: #0f172a;
+    }
+
+    .team-select {
+        width: 100%;
+        padding: 12px 14px;
+        border: 1px solid #cbd5e1;
+        border-radius: 12px;
+        background: #fff;
+        font-size: 15px;
+    }
+
+    .btn-primary {
+        border: 0;
+        background: linear-gradient(135deg, #2563eb, #0f766e);
+        color: #fff;
+        padding: 12px 18px;
+        border-radius: 12px;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+    .btn-primary:hover {
+        filter: brightness(1.04);
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 14px;
+    }
+
+    .stat-card {
+        border-radius: 16px;
+        padding: 18px;
+        background: linear-gradient(180deg, #eff6ff 0%, #ffffff 100%);
+        border: 1px solid #dbeafe;
+    }
+
+    .stat-label {
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #64748b;
+        margin-bottom: 10px;
+    }
+
+    .stat-value {
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: #0f172a;
+    }
+
+    .section-title {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 14px;
+    }
+
+    .section-title h2,
+    .section-title h3 {
+        margin: 0;
+    }
+
+    .section-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 16px;
+    }
+
+    .table-wrap {
+        overflow-x: auto;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 640px;
+    }
+
+    th, td {
+        padding: 12px 10px;
+        border-bottom: 1px solid #e5e7eb;
+        text-align: left;
+        vertical-align: top;
+    }
+
+    th {
+        font-size: 0.82rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #64748b;
+        background: #f8fafc;
+    }
+
+    .chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        border-radius: 999px;
+        padding: 6px 10px;
+        font-size: 0.82rem;
+        font-weight: 700;
+    }
+
+    .chip-good {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .chip-bad {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    .chip-neutral {
+        background: #e2e8f0;
+        color: #334155;
+    }
+
+    .muted-card {
+        background: #f8fafc;
+        border: 1px dashed #cbd5e1;
+        color: #475569;
+        border-radius: 14px;
+        padding: 16px;
+    }
+
+    .calendar-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 10px;
+    }
+
+    .calendar-day {
+        border: 1px solid #e2e8f0;
+        background: #fff;
+        border-radius: 14px;
+        padding: 12px;
+        min-height: 110px;
+    }
+
+    .calendar-day strong {
+        display: block;
+        margin-bottom: 6px;
+    }
+
+    .calendar-count {
+        font-size: 0.82rem;
+        color: #475569;
+        margin-bottom: 8px;
+    }
+
+    .calendar-match {
+        font-size: 0.85rem;
+        padding: 6px 8px;
+        border-radius: 10px;
+        background: #eff6ff;
+        margin-bottom: 6px;
+    }
+
+    .stack {
+        display: grid;
+        gap: 16px;
+    }
+
+    .riot-box ul {
+        margin: 10px 0 0;
+        padding-left: 18px;
+    }
+
+    @media (max-width: 720px) {
+        .picker-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .hero {
+            padding: 20px;
+        }
+    }
+</style>
+
+<div class="dashboard-shell">
+    <section class="hero">
+        <div class="hero-top">
+            <div>
+                <h1>Dashboard</h1>
+                <p>Selecciona un equipo para ver sus últimos scrims, partidos pendientes, rendimiento por jugador, rendimiento por mapa y evolución temporal.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="picker-card">
+        <form method="get" class="picker-grid">
+            <div>
+                <label class="field-label" for="team_id">Equipo</label>
+                <select id="team_id" name="team_id" class="team-select">
+                    <option value="">Elegir equipo</option>
+                    {% for team in teams %}
+                        <option value="{{ team.id }}" {% if selected_team and selected_team.id == team.id %}selected{% endif %}>
+                            {{ team.name }} ({{ team.tag }})
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit" class="btn-primary">Ver dashboard</button>
+        </form>
+        {% if not teams %}
+            <div class="muted-card" style="margin-top: 16px;">
+                No tienes equipos asignados todavía. Crea uno o pide acceso para empezar a ver reportes.
+            </div>
+        {% endif %}
+    </section>
+
+    {% if selected_team %}
+        <section class="panel">
+            <div class="section-title">
+                <div>
+                    <h2>{{ selected_team.name }} <span class="muted">({{ selected_team.tag }})</span></h2>
+                    <p class="muted" style="margin: 6px 0 0;">{{ selected_team.region }} · {{ team_summary.players_count }} jugadores · {{ team_summary.total_matches }} partidos</p>
+                </div>
+                <div class="chip {% if team_summary.winrate >= 50 %}chip-good{% else %}chip-bad{% endif %}">
+                    Winrate {{ team_summary.winrate }}%
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Winrate total</div>
+                    <div class="stat-value">{{ team_summary.winrate }}%</div>
+                    <div class="muted">{{ team_summary.wins }} victorias · {{ team_summary.losses }} derrotas</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Scrims totales</div>
+                    <div class="stat-value">{{ team_summary.scrims_count }}</div>
+                    <div class="muted">Total de partidos tipo scrim</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Pendientes</div>
+                    <div class="stat-value">{{ team_summary.pending_count }}</div>
+                    <div class="muted">Partidos aún sin resultado</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Jugadores</div>
+                    <div class="stat-value">{{ team_summary.players_count }}</div>
+                    <div class="muted">Roster activo del equipo</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Partidos totales</div>
+                    <div class="stat-value">{{ team_summary.total_matches }}</div>
+                    <div class="muted">Incluye scrims y oficiales</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="panel">
+            <div class="section-title">
+                <h2>Últimos 5 scrims</h2>
+            </div>
+            {% if recent_scrims %}
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Rival</th>
+                                <th>Torneo</th>
+                                <th>Tipo</th>
+                                <th>Resultado</th>
+                                <th>Score</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for match in recent_scrims %}
+                                <tr>
+                                    <td>{{ match.date|date:"d/m/Y H:i" }}</td>
+                                    <td>{{ match.opponent_name }}</td>
+                                    <td>{% if match.tournament %}{{ match.tournament.name }}{% else %}Sin torneo{% endif %}</td>
+                                    <td>{{ match.match_type }}</td>
+                                    <td>
+                                        {% if match.result == 'Pending' %}
+                                            <span class="chip chip-neutral">Pendiente</span>
+                                        {% elif match.result == 'Win' %}
+                                            <span class="chip chip-good">Win</span>
+                                        {% else %}
+                                            <span class="chip chip-bad">Loss</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ match.score_team }}-{{ match.score_opponent }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="muted-card">Todavía no hay scrims registrados para este equipo.</div>
+            {% endif %}
+        </section>
+
+        <section class="section-grid">
+            <div class="panel stack">
+                <div class="section-title">
+                    <h2>Partidos pendientes</h2>
+                    <span class="chip chip-neutral">Calendario</span>
+                </div>
+                {% if pending_matches %}
+                    {% for match in pending_matches %}
+                        <div class="muted-card">
+                            <strong>{{ match.date|date:"d/m/Y H:i" }}</strong><br>
+                            {{ match.opponent_name }} · {{ match.match_type }}<br>
+                            {% if match.tournament %}{{ match.tournament.name }}{% else %}Sin torneo{% endif %}
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="muted-card">No hay partidos pendientes próximos.</div>
+                {% endif %}
+            </div>
+
+            <div class="panel">
+                <div class="section-title">
+                    <h2>Calendario semanal</h2>
+                </div>
+                <div class="calendar-grid">
+                    {% for day in calendar_days %}
+                        <div class="calendar-day">
+                            <strong>{{ day.weekday }} · {{ day.day|date:"d/m" }}</strong>
+                            <div class="calendar-count">{{ day.count }} partido{{ day.count|pluralize }}</div>
+                            {% if day.matches %}
+                                {% for match in day.matches %}
+                                    <div class="calendar-match">{{ match.opponent_name }} · {{ match.date|date:"H:i" }}</div>
+                                {% endfor %}
+                            {% else %}
+                                <div class="muted">Libre</div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+
+        <section class="panel">
+            <div class="section-title">
+                <h2>Rendimiento por jugador</h2>
+            </div>
+            {% if player_rows %}
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Jugador</th>
+                                <th>K/D</th>
+                                <th>Winrate</th>
+                                <th>Mapas</th>
+                                <th>Agente favorito</th>
+                                <th>Kills</th>
+                                <th>Deaths</th>
+                                <th>Assists</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in player_rows %}
+                                <tr>
+                                    <td>{{ row.nickname }}</td>
+                                    <td>{{ row.kd_ratio }}</td>
+                                    <td>{{ row.winrate }}%</td>
+                                    <td>{{ row.maps_played }}</td>
+                                    <td>{{ row.favorite_agent }}</td>
+                                    <td>{{ row.total_kills }}</td>
+                                    <td>{{ row.total_deaths }}</td>
+                                    <td>{{ row.total_assists }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="muted-card">Aún no hay estadísticas por jugador.</div>
+            {% endif %}
+        </section>
+
+        <section class="panel">
+            <div class="section-title">
+                <h2>Rendimiento por mapa</h2>
+            </div>
+            {% if map_rows %}
+                <div style="margin-bottom: 20px;">
+                    <form method="get" style="display: flex; gap: 12px; align-items: flex-end;">
+                        <input type="hidden" name="team_id" value="{{ selected_team_id }}">
+                        <div class="form-group" style="margin: 0; flex: 1;">
+                            <label for="id_selected_map">Seleccionar mapa para ver estadísticas detalladas:</label>
+                            <select id="id_selected_map" name="selected_map" style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 8px;">
+                                <option value="">-- Selecciona un mapa --</option>
+                                {% for row in map_rows %}
+                                    <option value="{{ row.map_name }}" {% if selected_map == row.map_name %}selected{% endif %}>
+                                        {{ row.map_name }} ({{ row.total_played }} partidas)
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="padding: 8px 16px; margin-top: 0;">Ver gráfico</button>
+                    </form>
+                </div>
+
+                {% if selected_map and map_player_stats %}
+                    <div style="margin-bottom: 30px; padding: 16px; background: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0;">
+                        <h3 style="margin-top: 0;">Rendimiento en {{ selected_map }}</h3>
+                        <canvas id="mapChart" style="max-height: 300px;"></canvas>
+                    </div>
+                {% endif %}
+
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Mapa</th>
+                                <th>Partidas</th>
+                                <th>Victorias</th>
+                                <th>Winrate</th>
+                                <th>K/D</th>
+                                <th>Kills</th>
+                                <th>Deaths</th>
+                                <th>Assists</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in map_rows %}
+                                <tr>
+                                    <td>{{ row.map_name }}</td>
+                                    <td>{{ row.total_played }}</td>
+                                    <td>{{ row.wins }}</td>
+                                    <td>{{ row.winrate }}%</td>
+                                    <td>{{ row.kd_ratio }}</td>
+                                    <td>{{ row.total_kills }}</td>
+                                    <td>{{ row.total_deaths }}</td>
+                                    <td>{{ row.total_assists }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="muted-card">Todavía no hay datos suficientes por mapa.</div>
+            {% endif %}
+        </section>
+
+        <section class="panel">
+            <div class="section-title">
+                <h2>Agentes más usados</h2>
+            </div>
+            {% if agent_rows %}
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Agente</th>
+                                <th>Usos</th>
+                                <th>Victorias</th>
+                                <th>Winrate</th>
+                                <th>K/D</th>
+                                <th>Kills</th>
+                                <th>Deaths</th>
+                                <th>Assists</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in agent_rows %}
+                                <tr>
+                                    <td>{{ row.agent_name }}</td>
+                                    <td>{{ row.total_played }}</td>
+                                    <td>{{ row.wins }}</td>
+                                    <td>{{ row.winrate }}%</td>
+                                    <td>{{ row.kd_ratio }}</td>
+                                    <td>{{ row.total_kills }}</td>
+                                    <td>{{ row.total_deaths }}</td>
+                                    <td>{{ row.total_assists }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="muted-card">Todavía no hay agentes registrados para este equipo.</div>
+            {% endif %}
+        </section>
+
+        <section class="panel">
+            <div class="section-title">
+                <h2>Evolución temporal</h2>
+            </div>
+            {% if evolution_rows %}
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Fecha</th>
+                                <th>Rival</th>
+                                <th>Resultado</th>
+                                <th>Winrate acumulativo</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in evolution_rows %}
+                                <tr>
+                                    <td>{{ row.index }}</td>
+                                    <td>{{ row.date|date:"d/m/Y H:i" }}</td>
+                                    <td>{{ row.opponent_name }}</td>
+                                    <td>
+                                        {% if row.result == 'Pending' %}
+                                            <span class="chip chip-neutral">Pendiente</span>
+                                        {% elif row.result == 'Win' %}
+                                            <span class="chip chip-good">Win</span>
+                                        {% else %}
+                                            <span class="chip chip-bad">Loss</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ row.cumulative_winrate }}%</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="muted-card">Aún no hay evolución temporal disponible.</div>
+            {% endif %}
+        </section>
+
+        <section class="panel riot-box">
+            <div class="section-title">
+                <h2>Riot API</h2>
+                <span class="chip chip-neutral">Reservado</span>
+            </div>
+            <p class="muted" style="margin-top: 0;">Este espacio queda preparado para integrar la API de Riot y completar el perfil competitivo de cada jugador.</p>
+            <ul>
+                <li>Perfil de Riot ID / Summoner</li>
+                <li>Ranked queue y tier actual</li>
+                <li>Historial de partidas ranked</li>
+                <li>Pool de campeones y rendimiento</li>
+            </ul>
+        </section>
+    {% else %}
+        <section class="panel">
+            <div class="section-title">
+                <h2>Selecciona un equipo</h2>
+                <span class="chip chip-neutral">Sin datos</span>
+            </div>
+            <div class="muted-card">
+                El dashboard mostrará los partidos, el calendario, el rendimiento por jugador, los mapas y la evolución temporal en cuanto elijas un equipo.
+            </div>
+        </section>
+    {% endif %}
 </div>
+{% endblock %}
+
+{% block after %}
+    {% if selected_map and map_player_stats %}
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+            // Gráfico de rendimiento por jugador en el mapa seleccionado
+            const ctx = document.getElementById('mapChart').getContext('2d');
+            const playersData = [
+                {% for stat in map_player_stats %}
+                {
+                    nickname: "{{ stat.nickname }}",
+                    total_kills: {{ stat.total_kills }},
+                    total_deaths: {{ stat.total_deaths }},
+                    total_assists: {{ stat.total_assists }},
+                    kd_ratio: {{ stat.kd_ratio }},
+                    winrate: {{ stat.winrate }},
+                },
+                {% endfor %}
+            ];
+            
+            const chart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: playersData.map(p => p.nickname),
+                    datasets: [
+                        {
+                            label: 'Kills',
+                            data: playersData.map(p => p.total_kills),
+                            backgroundColor: '#16a34a',
+                            borderRadius: 6,
+                        },
+                        {
+                            label: 'Deaths',
+                            data: playersData.map(p => p.total_deaths),
+                            backgroundColor: '#dc2626',
+                            borderRadius: 6,
+                        },
+                        {
+                            label: 'Assists',
+                            data: playersData.map(p => p.total_assists),
+                            backgroundColor: '#2563eb',
+                            borderRadius: 6,
+                        },
+                    ],
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                        },
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1,
+                            },
+                        },
+                    },
+                },
+            });
+        </script>
+    {% endif %}
 {% endblock %}

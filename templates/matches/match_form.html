@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block title %}{% if mode == "edit" %}Editar partido{% else %}Crear partido{% endif %} | PremierFighters{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1>{% if mode == "edit" %}✏️ Editar partido{% else %}➕ Crear partido{% endif %}</h1>
+    <form method="post">
+        {% csrf_token %}
+      <div class="form-group">
+        {{ form.as_p }}
+      </div>
+
+      <div id="map-preview-container" style="margin:12px 0; display:none;">
+        <div id="map-preview" style="height:160px; border-radius:8px; background-size:cover; background-position:center; border:1px solid #e2e8f0;"></div>
+      </div>
+        <div class="form-actions">
+            <button class="btn btn-primary" type="submit">💾 Guardar</button>
+            <a class="btn" href="{% url 'match_list' %}">← Volver</a>
+        </div>
+    </form>
+</div>
+
+<style>
+  .form-group p {
+    margin: 16px 0 0;
+  }
+
+  .form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    color: #0f172a;
+    font-size: 14px;
+  }
+
+  .form-group input[type="text"],
+  .form-group input[type="email"],
+  .form-group input[type="password"],
+  .form-group input[type="date"],
+  .form-group input[type="datetime-local"],
+  .form-group input[type="number"],
+  .form-group select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    font-size: 14px;
+    font-family: inherit;
+  }
+
+  .form-group input:focus,
+  .form-group select:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  }
+
+  .errorlist {
+    background: #fee2e2;
+    border: 1px solid #fecaca;
+    border-radius: 10px;
+    padding: 12px;
+    margin-bottom: 16px;
+    color: #991b1b;
+    list-style: none;
+  }
+
+  .errorlist li {
+    margin: 4px 0;
+  }
+</style>
+{% endblock %}
+{% block extra_scripts %}
+<script>
+  (function(){
+    var staticBase = '/static/maps/';
+    function updatePreview(){
+      var field = document.querySelector('[name="map_name"]');
+      if(!field) return;
+      var val = field.value || '';
+      var container = document.getElementById('map-preview-container');
+      var preview = document.getElementById('map-preview');
+      if(!container || !preview) return;
+      if(!val){ container.style.display = 'none'; preview.style.backgroundImage = ''; return; }
+      var url = staticBase + encodeURIComponent(val) + '.png';
+      preview.style.backgroundImage = 'url("' + url + '")';
+      container.style.display = 'block';
+    }
+
+    document.addEventListener('DOMContentLoaded', function(){
+      var field = document.querySelector('[name="map_name"]');
+      if(!field) return;
+      // initialize
+      updatePreview();
+      field.addEventListener('change', updatePreview);
+      field.addEventListener('input', updatePreview);
+    });
+  })();
+</script>
+{% endblock %}

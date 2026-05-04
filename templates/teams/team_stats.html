@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}Estadísticas de {{ team.name }} | PremierFighters{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; margin-bottom: 24px;">
+        <div>
+            <h1 style="margin: 0;">Estadísticas - {{ team.name }}</h1>
+            <p class="muted" style="margin: 8px 0 0;">{{ team.region }} · {{ team.tag }}</p>
+        </div>
+        <a class="btn" href="{% url 'team_detail' team.id %}">← Volver al equipo</a>
+    </div>
+
+    <h2>Rendimiento de jugadores</h2>
+    {% if players %}
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Jugador</th>
+                        <th>K/D Ratio</th>
+                        <th>Winrate</th>
+                        <th>Agente favorito</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in players %}
+                        <tr>
+                            <td>
+                                <a href="{% url 'player_detail' row.player.id %}">{{ row.player.nickname }}</a>
+                            </td>
+                            <td>{{ row.player.calculate_kd_ratio }}</td>
+                            <td>{{ row.player.calculate_winrate }}%</td>
+                            <td>{{ row.favorite_agent }}</td>
+                            <td>
+                                <a class="btn" href="{% url 'player_detail' row.player.id %}">Ver</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p class="muted">No hay jugadores en este equipo.</p>
+    {% endif %}
+</div>
+{% endblock %}

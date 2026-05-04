@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}Detalle resultado | PremierFighters{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; margin-bottom: 24px;">
+        <div>
+            <h1 style="margin: 0;">Resultado de mapa</h1>
+            <p class="muted" style="margin: 8px 0 0;">{{ stat.match.date|date:"d/m/Y H:i" }}</p>
+        </div>
+        <div class="btn-group">
+            <a class="btn" href="{% url 'mapresult_update' stat.id %}">✏️ Editar</a>
+            <a class="btn btn-danger" href="{% url 'mapresult_delete' stat.id %}">🗑️ Borrar</a>
+        </div>
+    </div>
+
+    <div class="two-column">
+        <div style="background: #f8fafc; padding: 16px; border-radius: 12px; border: 1px solid #e2e8f0;">
+            <h3>Información del Resultado</h3>
+            <p><strong>Jugador:</strong> <a href="{% url 'player_detail' stat.player.id %}">{{ stat.player.nickname }}</a></p>
+            <p><strong>Partido:</strong> <a href="{% url 'match_detail' stat.match.id %}">{{ stat.match.team.name }} vs {{ stat.match.opponent_name }}</a></p>
+            <p><strong>Mapa:</strong> {{ stat.match.map_name }}</p>
+            <p><strong>Agente:</strong> {{ stat.agent_name|default:"Sin agente" }}</p>
+        </div>
+
+        <div style="background: linear-gradient(180deg, #eff6ff 0%, #ffffff 100%); padding: 16px; border-radius: 12px; border: 1px solid #dbeafe;">
+            <h3>Estadísticas</h3>
+            <div class="stat-row">
+                <strong>Kills:</strong> <span style="font-size: 1.3rem; color: #166534;">{{ stat.kills }}</span>
+            </div>
+            <div class="stat-row">
+                <strong>Deaths:</strong> <span style="font-size: 1.3rem; color: #991b1b;">{{ stat.deaths }}</span>
+            </div>
+            <div class="stat-row">
+                <strong>Assists:</strong> <span style="font-size: 1.3rem; color: #2563eb;">{{ stat.assists }}</span>
+            </div>
+            <div class="stat-row" style="margin-top: 12px;">
+                <strong>Resultado:</strong>
+                {% if stat.match.result != 'Pending' %}
+                    {% if stat.match.result == 'Win' %}
+                        <span class="chip chip-good">Victoria</span>
+                    {% else %}
+                        <span class="chip chip-bad">Derrota</span>
+                    {% endif %}
+                {% else %}
+                    {% if stat.won %}
+                        <span class="chip chip-good">Victoria</span>
+                    {% else %}
+                        <span class="chip chip-bad">Derrota</span>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .stat-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0;
+        border-bottom: 1px solid rgba(37, 99, 235, 0.1);
+    }
+
+    .stat-row:last-child {
+        border-bottom: none;
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Partidos | PremierFighters{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+        <h1 style="margin: 0;">🎮 Partidos</h1>
+        <a class="btn btn-primary" href="{% url 'match_create' %}">+ Crear partido</a>
+    </div>
+
+    {% if matches %}
+        <ul>
+            {% for item in matches %}
+                {% with match=item.match map_name=item.map_name banner=item.banner_url %}
+                <li>
+                    <div class="list-item" style="position:relative; overflow:hidden; border-radius:12px; {% if banner %}background-image: url('{{ banner }}'); background-size: cover; background-position: center;{% else %}background:#fff;{% endif %}">
+                        <div style="position:absolute; inset:0; background:linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35));"></div>
+                        <div class="list-item-main" style="position:relative; z-index:2; padding: 12px; display:flex; justify-content:space-between; align-items:center; gap:12px;">
+                            <div>
+                                <a href="{% url 'match_detail' match.id %}" style="color: #fff; font-weight:700;">{{ match.team.name }} vs {{ match.opponent_name }}</a>
+                                <div class="list-item-meta" style="color: #f1f5f9; margin-top:6px; font-size:13px;">
+                                    <strong>Mapa:</strong> {{ map_name|default:'Sin mapa' }} ·
+                                    <strong>Fecha:</strong> {{ match.date|date:"d/m/Y H:i" }} · 
+                                    <strong>Resultado:</strong> 
+                                    {% if match.result == 'Pending' %}
+                                        <span class="chip chip-neutral">Pendiente</span>
+                                    {% elif match.result == 'Win' %}
+                                        <span class="chip chip-good">Victoria</span>
+                                    {% else %}
+                                        <span class="chip chip-bad">Derrota</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="list-item-actions" style="position:relative; z-index:2;">
+                                <a class="btn" href="{% url 'match_detail' match.id %}">Ver</a>
+                                <a class="btn" href="{% url 'match_update' match.id %}">Editar</a>
+                                <a class="btn btn-danger" href="{% url 'match_delete' match.id %}">Borrar</a>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                {% endwith %}
+            {% endfor %}
+        </ul>
+    {% else %}
+        <div class="empty-state">
+            <p class="muted">No hay partidos disponibles.</p>
+            <a class="btn btn-primary" href="{% url 'match_create' %}" style="margin-top: 16px;">Crear tu primer partido</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}PremierFighters{% endblock %}</title>
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
@@ -13,102 +17,431 @@
         }
 
         header {
-            background: #111827;
+            background: linear-gradient(135deg, #0f172a 0%, #1e40af 100%);
             color: #ffffff;
-            padding: 14px 20px;
+            padding: 16px 20px;
+            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.1);
         }
 
         nav {
             display: flex;
-            gap: 14px;
+            gap: 20px;
             align-items: center;
             flex-wrap: wrap;
+            max-width: 1200px;
+            margin: 0 auto;
         }
 
         nav a {
             color: #dbeafe;
             text-decoration: none;
             font-weight: 600;
+            font-size: 15px;
+            transition: color 0.2s;
         }
 
         nav a:hover {
             color: #ffffff;
-            text-decoration: underline;
         }
 
         .container {
-            max-width: 960px;
-            margin: 24px auto;
-            padding: 0 16px;
+            max-width: 1200px;
+            margin: 32px auto;
+            padding: 0 20px;
         }
 
-        .card {
+        /* Cards */
+        .card, .panel {
             background: #ffffff;
-            border: 1px solid #e5e7eb;
-            border-radius: 8px;
-            padding: 16px;
-            margin-bottom: 16px;
+            border: 1px solid #dbe3ef;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05);
+            transition: box-shadow 0.2s;
         }
 
+        .card:hover, .panel:hover {
+            box-shadow: 0 8px 24px rgba(15, 23, 42, 0.1);
+        }
+
+        .card h1, .card h2, .card h3 {
+            margin-top: 0;
+            color: #0f172a;
+        }
+
+        /* Messages */
+        .messages {
+            display: grid;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .message {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-left: 4px solid #2563eb;
+            border-radius: 12px;
+            padding: 14px;
+            color: #1e40af;
+        }
+
+        .message.error {
+            background: #fee2e2;
+            border-color: #fecaca;
+            border-left-color: #dc2626;
+            color: #991b1b;
+        }
+
+        .message.success {
+            background: #dcfce7;
+            border-color: #bbf7d0;
+            border-left-color: #16a34a;
+            color: #166534;
+        }
+
+        .message.warning {
+            background: #fef3c7;
+            border-color: #fde68a;
+            border-left-color: #eab308;
+            color: #92400e;
+        }
+
+        /* Lists */
         ul {
-            padding-left: 18px;
+            padding-left: 0;
+            list-style: none;
+            margin: 0;
         }
 
+        ul li {
+            margin-bottom: 12px;
+        }
+
+        /* Muted text */
         .muted {
-            color: #6b7280;
+            color: #64748b;
+            font-size: 14px;
         }
 
         .user-row {
             margin-left: auto;
-            color: #e5e7eb;
+            color: #bfdbfe;
             font-size: 14px;
         }
 
-        .btn {
-            display: inline-block;
-            border: 1px solid #111827;
-            color: #111827;
-            padding: 8px 12px;
-            border-radius: 6px;
+        /* Buttons */
+        .btn, button[type="submit"] {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border: 1px solid #cbd5e1;
+            color: #0f172a;
+            padding: 10px 16px;
+            border-radius: 10px;
             text-decoration: none;
             font-weight: 600;
             background: #ffffff;
             cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
         }
 
-        .btn:hover {
-            background: #111827;
-            color: #ffffff;
+        .btn:hover, button[type="submit"]:hover {
+            background: #f1f5f9;
+            border-color: #94a3b8;
+        }
+
+        .btn-primary, .btn-primary:hover {
+            border: 0;
+            background: linear-gradient(135deg, #2563eb, #0f766e);
+            color: #fff;
+            padding: 11px 18px;
+            border-radius: 10px;
+        }
+
+        .btn-primary:hover {
+            filter: brightness(1.08);
+        }
+
+        .btn-danger {
+            border-color: #fca5a5;
+            color: #991b1b;
+        }
+
+        .btn-danger:hover {
+            background: #fee2e2;
+        }
+
+        .btn-success {
+            border-color: #86efac;
+            color: #166534;
+        }
+
+        .btn-success:hover {
+            background: #dcfce7;
+        }
+
+        /* Button groups */
+        .btn-group {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        /* List item styling */
+        .list-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 14px;
+            flex-wrap: wrap;
+        }
+
+        .list-item:hover {
+            background: #f1f5f9;
+        }
+
+        .list-item-main {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .list-item-main a {
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .list-item-main a:hover {
+            text-decoration: underline;
+        }
+
+        .list-item-meta {
+            font-size: 13px;
+            color: #64748b;
+            margin-top: 4px;
+        }
+
+        .list-item-actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        /* Chips */
+        .chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border-radius: 999px;
+            padding: 6px 12px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .chip-good {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .chip-bad {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .chip-neutral {
+            background: #e2e8f0;
+            color: #334155;
+        }
+
+        /* Grid layouts */
+        .two-column {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .three-column {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        /* Form styling */
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: #0f172a;
+            font-size: 14px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        input[type="date"],
+        input[type="time"],
+        input[type="datetime-local"],
+        input[type="number"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        /* Table styling */
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 640px;
+        }
+
+        th, td {
+            padding: 12px 14px;
+            border-bottom: 1px solid #e2e8f0;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #64748b;
+            background: #f8fafc;
+            font-weight: 700;
+        }
+
+        tr:hover {
+            background: #f8fafc;
+        }
+
+        /* Utility classes */
+        .mt-small { margin-top: 8px; }
+        .mt { margin-top: 16px; }
+        .mt-large { margin-top: 24px; }
+        .mb-small { margin-bottom: 8px; }
+        .mb { margin-bottom: 16px; }
+        .mb-large { margin-bottom: 24px; }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #64748b;
+        }
+
+        .empty-state p {
+            margin: 8px 0;
+            font-size: 15px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                margin: 20px auto;
+                padding: 0 16px;
+            }
+
+            nav {
+                gap: 12px;
+                font-size: 14px;
+            }
+
+            .list-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .list-item-actions {
+                width: 100%;
+            }
+
+            .btn-group {
+                width: 100%;
+            }
+
+            .btn {
+                flex: 1;
+                justify-content: center;
+            }
         }
     </style>
 </head>
 <body>
 <header>
     <nav>
-        <a href="{% url 'home' %}">Inicio</a>
-        <a href="{% url 'team_list' %}">Equipos</a>
-        <a href="{% url 'player_list' %}">Jugadores</a>
+        <a href="{% url 'home' %}">🏠 Inicio</a>
+        <a href="{% url 'team_list' %}">👥 Equipos</a>
+        <a href="{% url 'player_list' %}">⚔️ Jugadores</a>
+        <a href="{% url 'match_list' %}">🎮 Partidos</a>
         {% if user.is_authenticated %}
             <span class="user-row">{{ user.username }} ({{ user.role }})</span>
             <form method="post" action="{% url 'logout' %}" style="display:inline;">
                 {% csrf_token %}
-                <button class="btn" type="submit">Salir</button>
+                <button type="submit" class="btn">Salir</button>
             </form>
         {% else %}
-            <a href="{% url 'login' %}">Entrar</a>
+            <a href="{% url 'login' %}">🔐 Entrar</a>
         {% endif %}
     </nav>
 </header>
 
 <main class="container">
 {% if messages %}
+<div class="messages">
 {% for message in messages %}
-<div class="card" style="border-left: 4px solid #ef4444;">
-{{ message }}
-</div>
+    <div class="message {% if message.tags %}{{ message.tags }}{% endif %}">
+        {{ message }}
+    </div>
 {% endfor %}
+</div>
 {% endif %}
     {% block content %}{% endblock %}
+    {% block after %}{% endblock %}
 </main>
 </body>
 </html>

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}Borrar partido | PremierFighters{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1>🗑️ Borrar partido</h1>
+    <p style="background: #fee2e2; border: 1px solid #fecaca; border-radius: 12px; padding: 16px; color: #991b1b; margin-bottom: 24px;">
+      ⚠️ <strong>Cuidado:</strong> ¿Estás seguro que quieres borrar <strong>{{ match.team.name }} vs {{ match.opponent_name }}</strong>? Esta acción no se puede deshacer.
+    </p>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-actions">
+          <button class="btn btn-danger" type="submit">🗑️ Sí, borrar</button>
+          <a class="btn" href="{% url 'match_detail' match.id %}">← Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

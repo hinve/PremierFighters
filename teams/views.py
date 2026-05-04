@@ -2,6 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
+from matches.models import Match
 from users.permissions import ensure_can_manage_team, get_user_team
 
 from .forms import TeamForm
@@ -87,3 +88,33 @@ def team_delete(request, team_id):
         return redirect("team_list")
 
     return render(request, "teams/team_confirm_delete.html", {"team": team})
+
+
+@login_required
+def team_stats(request, team_id):
+    team = get_object_or_404(Team, id=team_id)
+    try:
+        ensure_can_manage_team(request.user, team)
+    except PermissionDenied:
+        messages.error(request, "No tienes permisos para ver las estadísticas de este equipo.")
+        return redirect("team_list")
+
+    players = team.players.prefetch_related("stats").all()  # type: ignore
+
+    player_rows = []
+    for player in players:
+        stats = list(player.stats.filter(match__result__in=[Match.ResultType.WIN, Match.ResultType.LOSS]))
+        agent_stats = {}
+        for stat in stats:
+            if stat.agent_name:
+                agent_stats[stat.agent_name] = agent_stats.get(stat.agent_name, 0) + 1
+
+        favorite_agent = max(agent_stats.items(), key=lambda item: item[1])[0] if agent_stats else "-"
+        player_rows.append(
+            {
+                "player": player,
+                "favorite_agent": favorite_agent,
+            }
+        )
+    
+    return render(request, "teams/team_stats.html", {"team": team, "players": player_rows})

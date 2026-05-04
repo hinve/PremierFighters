@@ -10,6 +10,7 @@ class Match(models.Model):
         OFFICIAL = 'Official', 'Official'
     
     class ResultType(models.TextChoices):
+        PENDING = 'Pending', 'Pendiente'
         WIN = 'Win', 'Win'
         LOSS = 'Loss', 'Loss'
     
@@ -37,8 +38,9 @@ class Match(models.Model):
     result = models.CharField(
         max_length=10,
         choices=ResultType.choices,
-        default=ResultType.LOSS
+        default=ResultType.PENDING
     )
+    map_name = models.CharField(max_length=100, blank=True, default='')
     created_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
@@ -48,4 +50,8 @@ class Match(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
-        return f"{self.team.name} vs {self.opponent_name} - {self.date.strftime('%Y-%m-%d %H:%M')} ({self.match_type})"
+        result_label = "Pendiente" if self.result == self.ResultType.PENDING else self.result
+        return f"{self.team.name} vs {self.opponent_name} - {self.date.strftime('%Y-%m-%d %H:%M')} ({self.match_type}, {result_label})"
+
+    def is_decided(self):
+        return self.result in {self.ResultType.WIN, self.ResultType.LOSS}

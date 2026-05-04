@@ -4,9 +4,31 @@
 
 {% block content %}
 <div class="card">
-    <h1>{{ team.name }} ({{ team.tag }})</h1>
-    <p><strong>Region:</strong> {{ team.region }}</p>
-    <p><strong>Coach:</strong> {% if team.coach %}{{ team.coach.username }}{% else %}Sin asignar{% endif %}</p>
-    <p><strong>Manager:</strong> {% if team.manager %}{{ team.manager.username }}{% else %}Sin asignar{% endif %}</p>
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; margin-bottom: 24px;">
+        <div>
+            <h1 style="margin: 0;">{{ team.name }} <span class="muted">({{ team.tag }})</span></h1>
+            <p class="muted" style="margin: 8px 0 0;">{{ team.region }}</p>
+        </div>
+        <div class="btn-group">
+            <a class="btn" href="{% url 'team_stats' team.id %}">📊 Estadísticas</a>
+            <a class="btn" href="{% url 'team_update' team.id %}">✏️ Editar</a>
+            <a class="btn btn-danger" href="{% url 'team_delete' team.id %}">🗑️ Borrar</a>
+        </div>
+    </div>
+
+    <div class="two-column">
+        <div>
+            <h3>Información</h3>
+            <p><strong>Coach:</strong> {% if team.coach %}<a href="{% url 'player_detail' team.coach.id %}">{{ team.coach.username }}</a>{% else %}<span class="muted">Sin asignar</span>{% endif %}</p>
+            <p><strong>Manager:</strong> {% if team.manager %}<a href="{% url 'player_detail' team.manager.id %}">{{ team.manager.username }}</a>{% else %}<span class="muted">Sin asignar</span>{% endif %}</p>
+        </div>
+        <div>
+            <h3>Acciones</h3>
+            <div class="btn-group" style="flex-direction: column;">
+                <a class="btn btn-primary" href="{% url 'home' %}?team_id={{ team.id }}">📈 Ver en dashboard</a>
+                <a class="btn" href="{% url 'team_list' %}">👈 Volver a equipos</a>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}

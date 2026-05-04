@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Resultados de mapa | PremierFighters{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+        <h1 style="margin: 0;">📊 Resultados de mapa</h1>
+        <a class="btn btn-primary" href="{% url 'mapresult_create' %}">+ Crear resultado</a>
+    </div>
+
+    {% if stats %}
+        <ul>
+            {% for stat in stats %}
+                <li>
+                    <div class="list-item">
+                        <div class="list-item-main">
+                            <a href="{% url 'mapresult_detail' stat.id %}">{{ stat.player.nickname }}</a>
+                            <div class="list-item-meta">
+                                <strong>Match:</strong> {{ stat.match.team.name }} vs {{ stat.match.opponent_name }} ·
+                                <strong>Mapa:</strong> {{ stat.match.map_name }} ·
+                                <strong>Agente:</strong> {{ stat.agent_name|default:"Sin agente" }} ·
+                                <strong>K/D:</strong> {{ stat.kills }}/{{ stat.deaths }} ·
+                                <strong>Assists:</strong> {{ stat.assists }}
+                            </div>
+                        </div>
+                        <div class="list-item-actions">
+                            <a class="btn" href="{% url 'mapresult_detail' stat.id %}">Ver</a>
+                            <a class="btn" href="{% url 'mapresult_update' stat.id %}">Editar</a>
+                            <a class="btn btn-danger" href="{% url 'mapresult_delete' stat.id %}">Borrar</a>
+                        </div>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <div class="empty-state">
+            <p class="muted">No hay resultados de mapa disponibles.</p>
+            <a class="btn btn-primary" href="{% url 'mapresult_create' %}" style="margin-top: 16px;">Crear tu primer resultado</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -2,11 +2,63 @@
 {% block title %}Jugador | PremierFighters{% endblock %}
 {% block content %}
 <div class="card">
-  <h1>{% if mode == "edit" %}Editar jugador{% else %}Crear jugador{% endif %}</h1>
+  <h1>{% if mode == "edit" %}✏️ Editar jugador{% else %}➕ Crear jugador{% endif %}</h1>
   <form method="post">
     {% csrf_token %}
-    {{ form.as_p }}
-    <button class="btn" type="submit">Guardar</button>
+    <div class="form-group">
+      {{ form.as_p }}
+    </div>
+    <div class="form-actions">
+      <button class="btn btn-primary" type="submit">💾 Guardar</button>
+      <a class="btn" href="{% url 'player_list' %}">← Volver</a>
+    </div>
   </form>
 </div>
+
+<style>
+  .form-group p {
+    margin: 16px 0 0;
+  }
+
+  .form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    color: #0f172a;
+    font-size: 14px;
+  }
+
+  .form-group input[type="text"],
+  .form-group input[type="email"],
+  .form-group input[type="password"],
+  .form-group select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    font-size: 14px;
+    font-family: inherit;
+  }
+
+  .form-group input:focus,
+  .form-group select:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  }
+
+  .errorlist {
+    background: #fee2e2;
+    border: 1px solid #fecaca;
+    border-radius: 10px;
+    padding: 12px;
+    margin-bottom: 16px;
+    color: #991b1b;
+    list-style: none;
+  }
+
+  .errorlist li {
+    margin: 4px 0;
+  }
+</style>
 {% endblock %}
