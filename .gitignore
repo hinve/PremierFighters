@@ -1,1 +1,3 @@
 venv-django/
+.env
+.env.local

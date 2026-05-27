@@ -614,22 +614,12 @@
 
 {% block after %}
     {% if selected_map and map_player_stats %}
+        {{ map_player_stats|json_script:"map-player-stats-data" }}
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <script>
             // Gráfico de rendimiento por jugador en el mapa seleccionado
             const ctx = document.getElementById('mapChart').getContext('2d');
-            const playersData = [
-                {% for stat in map_player_stats %}
-                {
-                    nickname: "{{ stat.nickname }}",
-                    total_kills: {{ stat.total_kills }},
-                    total_deaths: {{ stat.total_deaths }},
-                    total_assists: {{ stat.total_assists }},
-                    kd_ratio: {{ stat.kd_ratio }},
-                    winrate: {{ stat.winrate }},
-                },
-                {% endfor %}
-            ];
+            const playersData = JSON.parse(document.getElementById('map-player-stats-data').textContent);
             
             const chart = new Chart(ctx, {
                 type: 'bar',

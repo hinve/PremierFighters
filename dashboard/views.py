@@ -3,7 +3,7 @@ from typing import Any, cast
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.db.models import Count, Q, Sum
+from django.db.models import Count, F, Q, Sum
 from django.shortcuts import render
 from django.utils import timezone
 
@@ -27,6 +27,7 @@ def home(request):
     teams = _get_accessible_teams(request.user)
     selected_team = None
     selected_team_id = request.GET.get("team_id") or request.GET.get("team")
+    selected_map = request.GET.get("selected_map") or ""
 
     if selected_team_id:
         selected_team = teams.filter(id=selected_team_id).first()
@@ -39,6 +40,7 @@ def home(request):
         "teams": teams,
         "selected_team": selected_team,
         "selected_team_id": getattr(selected_team, "id", None),
+        "selected_map": selected_map,
         "team_summary": None,
         "recent_scrims": [],
         "pending_matches": [],
@@ -70,6 +72,7 @@ def home(request):
     total_matches = decided_matches.count()
     wins = decided_matches.filter(result=Match.ResultType.WIN).count()
     losses = total_matches - wins
+    decided_count = decided_matches.count()
     scrims_count = decided_matches.filter(match_type=Match.MatchType.SCRIM).count()
     scrim_matches = (
         decided_matches.filter(match_type=Match.MatchType.SCRIM)
@@ -161,6 +164,34 @@ def home(request):
 
     map_rows.sort(key=lambda item: (item["total_played"], item["winrate"], item["kd_ratio"]), reverse=True)
 
+    map_player_stats = []
+    if selected_map:
+        map_player_stats = list(
+            PlayerMatchStats.objects.filter(
+                player__team=team,
+                match__result__in=decided_results,
+                match__map_name=selected_map,
+            )
+            .values("player__nickname")
+            .annotate(
+                nickname=F("player__nickname"),
+                total_kills=Sum("kills"),
+                total_deaths=Sum("deaths"),
+                total_assists=Sum("assists"),
+                total_played=Count("id"),
+                wins=Count("id", filter=Q(match__result=Match.ResultType.WIN)),
+            )
+            .values("nickname", "total_kills", "total_deaths", "total_assists", "total_played", "wins")
+            .order_by("-total_kills", "nickname")
+        )
+        for row in map_player_stats:
+            total_played = row["total_played"] or 0
+            total_kills = row["total_kills"] or 0
+            total_deaths = row["total_deaths"] or 0
+            wins_for_player = row["wins"] or 0
+            row["kd_ratio"] = round(total_kills / total_deaths, 2) if total_deaths else float(total_kills) if total_kills else 0.0
+            row["winrate"] = round((wins_for_player / total_played) * 100, 1) if total_played else 0.0
+
     agent_queryset = (
         PlayerMatchStats.objects.filter(player__team=team, match__result__in=decided_results)
         .exclude(agent_name="")
@@ -227,7 +258,7 @@ def home(request):
                 "total_matches": total_matches,
                 "wins": wins,
                 "losses": losses,
-                "winrate": round((wins / total_matches) * 100, 1) if total_matches else 0.0,
+                "winrate": round((wins / decided_count) * 100, 1) if decided_count else 0.0,
                 "scrims_count": scrims_count,
                 "players_count": team.players.count(),
                 "pending_count": team.matches.filter(result=Match.ResultType.PENDING).count(),
@@ -239,6 +270,7 @@ def home(request):
             "map_rows": map_rows,
             "agent_rows": agent_rows,
             "evolution_rows": evolution_rows[-10:],
+            "map_player_stats": map_player_stats,
         }
     )
 

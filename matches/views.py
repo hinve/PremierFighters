@@ -22,7 +22,7 @@ def match_add_player(request, match_id):
         ensure_can_manage_team(request.user, match.team)
     except PermissionDenied:
         messages.error(request, "No tienes permisos para modificar este partido.")
-        return redirect("match_detail", match_id=match.id)
+        return redirect("match_detail", match_id=match.id) # type: ignore
 
     # Players from the team not already associated to this match
     existing_player_ids = PlayerMatchStats.objects.filter(match=match).values_list("player_id", flat=True)
@@ -34,7 +34,7 @@ def match_add_player(request, match_id):
             player = available_players.get(id=player_id)
         except Player.DoesNotExist:
             messages.error(request, "Selecciona un jugador válido.")
-            return redirect("match_add_player", match_id=match.id)
+            return redirect("match_add_player", match_id=match.id) # type: ignore
 
         # Default stats for new association
         PlayerMatchStats.objects.create(
@@ -47,7 +47,7 @@ def match_add_player(request, match_id):
             won=(match.result == Match.ResultType.WIN) if match.result != Match.ResultType.PENDING else False,
         )
         messages.success(request, f"Jugador {player.nickname} añadido al partido.")
-        return redirect("match_detail", match_id=match.id)
+        return redirect("match_detail", match_id=match.id) # type: ignore
 
     return render(request, "matches/match_add_player.html", {"match": match, "available_players": available_players})
 

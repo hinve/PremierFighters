@@ -189,7 +189,7 @@ def mapresult_update(request, stat_id):
                 form.add_error(None, "El jugador y el partido deben pertenecer al mismo equipo.")
             else:
                 updated.save()
-                return redirect("match_detail", match_id=stat.match.id)
+                return redirect("match_detail", match_id=stat.match.id) # type: ignore
     else:
         form = PlayerMatchStatsForm(instance=stat, user=request.user)
 
@@ -208,6 +208,6 @@ def mapresult_delete(request, stat_id):
     if request.method == "POST":
         stat.delete()
         messages.success(request, "Resultado de mapa eliminado.")
-        return redirect("match_detail", match_id=stat.match.id)
+        return redirect("match_detail", match_id=stat.match.id) # type: ignore
 
     return render(request, "stats/mapresult_confirm_delete.html", {"stat": stat})
