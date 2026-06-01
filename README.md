@@ -76,6 +76,50 @@ Abrir `http://127.0.0.1:8000/` en el navegador.
 
 ---
 
+## Documentación automática en `localhost/docs`
+
+Se ha habilitado **Django Admin Docs** para tener documentación navegable desde el propio proyecto.
+
+1. Aplica migraciones y crea un superusuario (si no lo tienes):
+
+```powershell
+python manage.py migrate
+python manage.py createsuperuser
+```
+
+2. Arranca el servidor:
+
+```powershell
+python manage.py runserver
+```
+
+3. Abre:
+
+- `http://127.0.0.1:8000/docs/` (documentación)
+- `http://127.0.0.1:8000/admin/` (panel admin)
+
+> La documentación de `/docs/` requiere iniciar sesión con un usuario con permisos de staff/admin.
+
+---
+
+## Despliegue de la web (resumen rápido)
+
+Para desplegar la aplicación en un hosting (Render, Railway, VPS, etc.):
+
+1. Configura variables de entorno en producción:
+   - `DEBUG=False`
+   - `SECRET_KEY=<valor-seguro>`
+   - `ALLOWED_HOSTS=<tu-dominio>`
+2. Ejecuta migraciones en el servidor:
+
+```bash
+python manage.py migrate
+```
+
+3. Lanza la app con un servidor WSGI (por ejemplo `gunicorn`) detrás de un proxy (Nginx o similar).
+
+---
+
 ## Tests automatizados
 
 Se han añadido tests básicos para `players` que cubren la vista `player_detail`.

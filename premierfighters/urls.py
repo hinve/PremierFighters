@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
-from django.urls import path
+from django.urls import include, path
 
 from dashboard.views import home
 from teams.views import team_list, team_detail, team_create, team_update, team_delete, team_stats
@@ -10,6 +10,7 @@ from stats.views import mapresult_list, mapresult_detail, mapresult_create, mapr
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("docs/", include("django.contrib.admindocs.urls")),
     path("login/", auth_views.LoginView.as_view(template_name="auth/login.html"), name="login"),
     path("logout/", auth_views.LogoutView.as_view(), name="logout"),
     path("", home, name="home"),
