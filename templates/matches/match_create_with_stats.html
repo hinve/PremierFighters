@@ -66,13 +66,10 @@
                     <thead>
                         <tr>
                             <th>Jugador</th>
-                            <th>Mapa</th>
                             <th>Agente</th>
                             <th>Kills</th>
                             <th>Deaths</th>
                             <th>Assists</th>
-                            <th>¿Ganó?</th>
-                            <th>Eliminar</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -81,46 +78,39 @@
                                 <td>
                                     {{ form.player }}
                                     {% if form.player.errors %}
-                                        <div class="message error" style="margin-top: 8px;">{{ form.player.errors.0 }}</div>
+                                        <div class="message error" style="margin-top: 7px;">{{ form.player.errors.0 }}</div>
                                     {% endif %}
                                 </td>
                                 <td>
                                     {{ form.map_name }}
                                     {% if form.map_name.errors %}
-                                        <div class="message error" style="margin-top: 8px;">{{ form.map_name.errors.0 }}</div>
+                                        <div class="message error" style="margin-top: 7px;">{{ form.map_name.errors.0 }}</div>
                                     {% endif %}
                                 </td>
                                 <td>
                                     {{ form.agent_name }}
                                     {% if form.agent_name.errors %}
-                                        <div class="message error" style="margin-top: 8px;">{{ form.agent_name.errors.0 }}</div>
+                                        <div class="message error" style="margin-top: 7px;">{{ form.agent_name.errors.0 }}</div>
                                     {% endif %}
                                 </td>
                                 <td>
                                     {{ form.kills }}
                                     {% if form.kills.errors %}
-                                        <div class="message error" style="margin-top: 8px;">{{ form.kills.errors.0 }}</div>
+                                        <div class="message error" style="margin-top: 7px;">{{ form.kills.errors.0 }}</div>
                                     {% endif %}
                                 </td>
                                 <td>
                                     {{ form.deaths }}
                                     {% if form.deaths.errors %}
-                                        <div class="message error" style="margin-top: 8px;">{{ form.deaths.errors.0 }}</div>
+                                        <div class="message error" style="margin-top: 7px;">{{ form.deaths.errors.0 }}</div>
                                     {% endif %}
                                 </td>
                                 <td>
                                     {{ form.assists }}
                                     {% if form.assists.errors %}
-                                        <div class="message error" style="margin-top: 8px;">{{ form.assists.errors.0 }}</div>
+                                        <div class="message error" style="margin-top: 7px;">{{ form.assists.errors.0 }}</div>
                                     {% endif %}
                                 </td>
-                                <td>
-                                    {{ form.won }}
-                                    {% if form.won.errors %}
-                                        <div class="message error" style="margin-top: 8px;">{{ form.won.errors.0 }}</div>
-                                    {% endif %}
-                                </td>
-                                <td>{{ form.DELETE }}</td>
                             </tr>
                         {% endfor %}
                     </tbody>
@@ -128,7 +118,7 @@
             </div>
 
             <p class="muted" style="margin-top: 16px;">
-                Puedes crear el partido aunque no completes todos los mapas. Después podrás editar los resultados desde "Resultados de mapa".
+                Puedes crear el partido aunque no completes todos los datos. Después podrás editar los resultados desde "Resultados de mapa".
             </p>
         </div>
 

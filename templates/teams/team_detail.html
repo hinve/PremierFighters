@@ -19,8 +19,8 @@
     <div class="two-column">
         <div>
             <h3>Información</h3>
-            <p><strong>Coach:</strong> {% if team.coach %}<a href="{% url 'player_detail' team.coach.id %}">{{ team.coach.username }}</a>{% else %}<span class="muted">Sin asignar</span>{% endif %}</p>
-            <p><strong>Manager:</strong> {% if team.manager %}<a href="{% url 'player_detail' team.manager.id %}">{{ team.manager.username }}</a>{% else %}<span class="muted">Sin asignar</span>{% endif %}</p>
+            <p><strong>Coach:</strong> {% if team.coach %}{{ team.coach.username }}{% else %}<span class="muted">Sin asignar</span>{% endif %}</p>
+            <p><strong>Manager:</strong> {% if team.manager %}{{ team.manager.username }}{% else %}<span class="muted">Sin asignar</span>{% endif %}</p>
         </div>
         <div>
             <h3>Acciones</h3>
